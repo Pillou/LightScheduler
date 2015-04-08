@@ -1,0 +1,18 @@
+# depslib dependency file v1.0
+1428530932 source:/home/guillaume/Documents/prog/projets/LightScheduler/src/BinaryHeap.c
+	"BinaryHeap.h"
+	<stdio.h>
+
+1428530737 /home/guillaume/Documents/prog/projets/LightScheduler/src/BinaryHeap.h
+	"task.h"
+
+1428528396 /home/guillaume/Documents/prog/projets/LightScheduler/src/task.h
+
+1428528324 source:/home/guillaume/Documents/prog/projets/LightScheduler/src/tasck.c
+	"task.h"
+
+1428530748 source:/home/guillaume/Documents/prog/projets/LightScheduler/codeblocks/LightScheduler/main.c
+	<stdio.h>
+	<stdlib.h>
+	"BinaryHeap.h"
+
