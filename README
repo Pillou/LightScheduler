@@ -1,1 +1,41 @@
-TODO : use an array of pointer to tasks in order to decrease memory consumtion
+Light Scheduler
+===============
+
+It is a simple and light scheduler. It is non preemptive and priority based.
+The task with the lowest priority will be executed next.
+
+It will be very to use on embedded devices.
+
+
+
+Dependency
+----------
+It requires the following libraries :
+#include <stddef.h> for NULL
+#include <stdint.h> for uint8_t, etc
+
+Quick Start
+-----------
+Only three function are necessary for using the LightScheduler.
+
+1/ int SchedulerInit(SleepFct_t sleep_fct, ErrorFct_t error_fct);
+
+This function will initalize the LightScheduler. 
+You can pass a sleep_fct which will be executed when no more task are ready.
+It can be use to set the device in a low power mode waiting for an interrupt.
+If you do not wish to use this feature, just put a NULL instead.
+
+You can pass a error_fct which will run at the end of each task and has as parameter the return value of this task.
+It can be use to handle error of the tasks.
+If you do not wish to use this feature, just put a NULL instead.
+
+2/ int SchedulerAddTask(int32_t priority, const Task_t *task);
+
+This function add a task to the scheduler.
+The lowest priority will be executed fist by the scheduler.
+/!\ WARNING: if you use this function inside an interrupt, it will be necessary to add critical section protection inside the SchedulerRunLoop.
+
+3/ void SchedulerRunLoop(void)
+
+Your program will never leave this function.
+It start the scheduler.
