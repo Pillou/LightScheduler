@@ -1,14 +1,17 @@
 /** \file BinaryHeap.h
- *  \brief
+ *  \brief Binary heap use to implement a priority queue
+ * This is a min-heap : meaning the value of each node it greater or equal to the value of
+ * its parents.
+ *
  */
 
 #ifndef BINARYHEAP_H_INCLUDED
 #define BINARYHEAP_H_INCLUDED
 
-#include "task.h"
+#include <stdint.h>
 
 #define HEAP_MAX_SIZE           (20U)   /**< Configure the size of the tree */
-#define HEAP_TEST               (1)     /**< activate the test functions */
+#define HEAP_TEST               (0)     /**< activate the test functions */
 
 /**< Binary heap state type */
 typedef enum {
@@ -18,21 +21,28 @@ typedef enum {
     HEAP_ERROR
 } Heap_state_t;
 
+/**< Binary heap node structure */
+typedef struct {
+    int32_t value;
+    void * data;
+} Node_t;
+
 /**< Binary heap structure */
 typedef struct {
-    unsigned int size;
-    task_t array[HEAP_MAX_SIZE];
+    uint32_t size;
+    Node_t array[HEAP_MAX_SIZE];
 } Heap_t;
 
-void InitHeap(Heap_t * heap);
-Heap_state_t GetHeapState(const Heap_t * heap);
 
-Heap_state_t HeapInsert(Heap_t * heap, task_t data);
-Heap_state_t HeapGetMin(Heap_t * heap, task_t *data);
+
+Heap_state_t InitHeap(Heap_t* heap);
+Heap_state_t HeapInsert(Heap_t* heap, Node_t data);
+Heap_state_t HeapGetMin(Heap_t* heap, Node_t *data);
+uint32_t HeapGetSize(Heap_t* heap);
+
 
 #ifdef HEAP_TEST
 void PrintHeap(const Heap_t * heap);
-
 void TestPrintHeap(void);
 void TestHeapInsertGetMin(void);
 

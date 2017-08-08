@@ -16,3 +16,29 @@
 	<stdlib.h>
 	"BinaryHeap.h"
 
+1502223084 source:c:\users\sesa388215\documents\lightscheduler\src\scheduler.c
+	"scheduler.h"
+	<stddef.h>
+
+1502223634 c:\users\sesa388215\documents\lightscheduler\src\binaryheap.h
+	<stdint.h>
+
+1502221256 c:\users\sesa388215\documents\lightscheduler\src\task.h
+
+1502206655 source:c:\users\sesa388215\documents\lightscheduler\src\tasck.c
+	"task.h"
+
+1502223387 source:c:\users\sesa388215\documents\lightscheduler\codeblocks\lightscheduler\main.c
+	<stdio.h>
+	<stdlib.h>
+	<assert.h>
+	"scheduler.h"
+
+1502223426 source:c:\users\sesa388215\documents\lightscheduler\src\binaryheap.c
+	"BinaryHeap.h"
+	<stdio.h>
+	<assert.h>
+
+1502223782 c:\users\sesa388215\documents\lightscheduler\src\scheduler.h
+	"BinaryHeap.h"
+

@@ -1,58 +1,82 @@
 /** \file BinaryHeap.c
- *  \brief
+ *  \brief Binary heap use to implement a priority queue
+ * This is a min-heap : meaning the value of each node it greater or equal to the value of
+ * its parents.
+ *
  * TODO : make automatic tests
- * TODO : switch from unsigned int to arbritary type
- * TODO : finish documentation
  */
 #include "BinaryHeap.h"
 
 #ifdef HEAP_TEST
 #include <stdio.h>
+#include <assert.h>
 #endif // HEAP_TEST
 
-/** \brief void InitHeap( Heap_t * heap )
+// static functions
+static void _Swap(Heap_t * heap, uint32_t a, uint32_t b);
+static void _HeapSwim( Heap_t * heap, uint32_t index );
+static void _HeapSink( Heap_t * heap, uint32_t index );
+
+
+
+/** \brief InitHeap
  * Initialize the heap structure
  * \param Heap_t * heap
- * \return void
+ * \return Heap_state_t     HEAP_OK if ok
  */
-void InitHeap( Heap_t * heap ){
+Heap_state_t InitHeap( Heap_t * heap ){
+    uint32_t i=0;
+    for(i=0; i<HEAP_MAX_SIZE; i++){
+        heap->array[i].data = NULL;
+        heap->array[i].value = 0;
+    }
     heap->size = 0;
+    return HEAP_OK;
 }
 
-/** \brief static void _Swap(task_t *array, unsigned int a, unsigned int b)
- * local function which swap the value of of index a and index b in the array
- * \param task_t *array
- * \param unsigned int a
- * \param unsigned int b
+/** \brief HeapGetSize
+ * Return the number of element in the heap
+ * \param Heap_t * heap
+ * \return uint32_t
+ */
+uint32_t HeapGetSize(Heap_t* heap){
+    return heap->size;
+}
+
+/** \brief static void _Swap(Heap_t * heap, uint32_t a, uint32_t b)
+ * local function which swap the value of index a and index b in the array
+ * \param Heap_t * heap
+ * \param uint32_t a
+ * \param uint32_t b
  * \return void
  */
-static void _Swap(task_t *array, unsigned int a, unsigned int b){
-    task_t buffer;
-    buffer = array[a];
-    array[a] = array[b];
-    array[b] = buffer;
+static void _Swap(Heap_t * heap, uint32_t a, uint32_t b){
+    Node_t buffer;
+    buffer = heap->array[a];
+    heap->array[a] = heap->array[b];
+    heap->array[b] = buffer;
 }
 
-/** \brief static void _HeapSwim( Heap_t * heap, unsigned int index )
+/** \brief static void _HeapSwim( Heap_t * heap, uint32_t index )
  * local function which swim up the element starting at position index
  * \param Heap_t * heap
- * \param unsigned int index
+ * \param uint32_t index
  * \return void
  */
-static void _HeapSwim( Heap_t * heap, unsigned int index ){
-    while(index > 1 && heap->array[index].priority < heap->array[index/2].priority){
-        _Swap(heap->array, index, index/2);
+static void _HeapSwim( Heap_t * heap, uint32_t index ){
+    while(index > 1 && heap->array[index].value < heap->array[index/2].value){
+        _Swap(heap, index, index/2);
         index = index / 2;
     }
 }
 
-/** \brief Heap_state_t HeapInsert( Heap_t * heap, unsigned int data)
+/** \brief Heap_state_t HeapInsert( Heap_t * heap, Node_t data)
  *
  * \param Heap_t * heap
- * \param unsigned int data
+ * \param Node_t data
  * \return Heap_state_t
  */
-Heap_state_t HeapInsert( Heap_t * heap, task_t data){
+Heap_state_t HeapInsert( Heap_t * heap, Node_t data){
     if( heap->size >= HEAP_MAX_SIZE-1 )     return HEAP_ERROR;
     heap->size++;
     heap->array[heap->size] = data;
@@ -61,39 +85,38 @@ Heap_state_t HeapInsert( Heap_t * heap, task_t data){
     return HEAP_OK;
 }
 
-/** \brief static void _HeapSink( Heap_t * heap, unsigned int index )
+/** \brief static void _HeapSink( Heap_t * heap, uint32_t index )
  *
  * \param Heap_t * heap
- * \param unsigned int index
+ * \param uint32_t index
  * \return void
  */
-static void _HeapSink( Heap_t * heap, unsigned int index ){
+static void _HeapSink( Heap_t * heap, uint32_t index ){
     while(2*index <= heap->size){
-        unsigned int j = 2*index;
-        if( j+1 <= heap->size && heap->array[j].priority > heap->array[j+1].priority){
+        uint32_t j = 2*index;
+        if( j+1 <= heap->size && heap->array[j].value > heap->array[j+1].value){
             j++;
         }
-        if( heap->array[j].priority > heap->array[index].priority){
+        if( heap->array[j].value > heap->array[index].value){
             break;
         }
-        _Swap(heap->array, index, j);
+        _Swap(heap, index, j);
         index = j;
     }
 }
 
-/** \brief Heap_state_t HeapGetMin(Heap_t * heap, unsigned int *data )
+/** \brief Heap_state_t HeapGetMin(Heap_t * heap, Node_t *data )
  *
  * \param Heap_t * heap
- * \param unsigned int *data
+ * \param Node_t *data
  * \return Heap_state_t
  */
-Heap_state_t HeapGetMin(Heap_t * heap, task_t *data ){
-    if( heap->size == 0)    return HEAP_ERROR;
+Heap_state_t HeapGetMin(Heap_t * heap, Node_t *data ){
+    if( heap->size == 0)    return HEAP_EMPTY;
     *data = heap->array[1];
-    _Swap(heap->array, 1, heap->size);
+    _Swap(heap, 1, heap->size);
     heap->size--;
     _HeapSink(heap, 1);
-    if( heap->size == 0)    return HEAP_EMPTY;
     return HEAP_OK;
 }
 
@@ -118,7 +141,7 @@ void PrintHeap( const Heap_t * heap ){
     printf("0: -\n");
     for(i = 1; i <= heap->size; i*=2){
         for(j = 0; i+j <= heap->size && j<i; j++){
-            printf("%d: prio %d, cb %p", i+j, heap->array[i+j].priority, (void *)heap->array[i+j].cb);
+            printf("%d: value %d, data pt %p ", i+j, heap->array[i+j].value, (void *)heap->array[i+j].data);
         }
         printf("\n");
     }
@@ -150,9 +173,8 @@ void TestPrintHeap(void){
 }
 
 void TestHeapInsertGetMin(void){
-    task_t unsorted[] = {{14, NULL}, {12, NULL},{25, NULL},{3, NULL},{45, NULL},\
+    Node_t unsorted[] = {{14, NULL}, {12, NULL},{25, NULL},{3, NULL},{45, NULL},\
                         {1, NULL},{165,NULL},{3,NULL},{88,NULL},{123,NULL},{170,NULL}};
-    task_t sorted[sizeof(unsorted)/sizeof(task_t)];
     int i;
 
 
@@ -161,14 +183,14 @@ void TestHeapInsertGetMin(void){
     InitHeap(&h);
 
     PrintHeap(&h);
-    for(i=0; i<sizeof(unsorted)/sizeof(task_t); i++){
+    for(i=0; i<sizeof(unsorted)/sizeof(Node_t); i++){
         HeapInsert(&h, unsorted[i]);
         PrintHeap(&h);
     }
-    for(i=0; i<sizeof(unsorted)/sizeof(task_t); i++){
-        task_t task;
-        HeapGetMin(&h, &task);
-        printf("(prio: %d, cb: %p)", task.priority, task.cb);
+    for(i=0; i<sizeof(unsorted)/sizeof(Node_t); i++){
+        Node_t node;
+        HeapGetMin(&h, &node);
+        printf("(value: %d, data: %p)", node.value, node.data);
     }
     PrintHeap(&h);
 
